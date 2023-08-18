@@ -1,9 +1,7 @@
 import { useState } from "react";
 
 const initialItems = [
-  { id: 1, description: "Passports", quantity: 2, packed: true },
-  { id: 2, description: "Socks", quantity: 12, packed: false },
-  { id: 3, description: "Charger", quantity: 1, packed: false },
+  { id: 1, description: "shirt", quantity: 2, packed: false },
 ];
 
 export default function App() {
@@ -27,6 +25,16 @@ function Form() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (!description) return;
+    const newItem = {
+      id: Date.now(),
+      description,
+      quantity,
+      packed: false,
+    };
+    console.log(newItem);
+    setDescription("");
+    SetQuantity(1);
   }
 
   return (
