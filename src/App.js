@@ -25,6 +25,7 @@ export default function App() {
   function handleClearItem() {
     const userRes = window.confirm("Are you want to delete the LIST ?");
     if (!userRes) return;
+    //
     setItems([]);
   }
 
