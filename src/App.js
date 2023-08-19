@@ -16,12 +16,22 @@ export default function App() {
     setItems((items) => items.filter((i) => i.id !== id));
   }
 
+  function handleToggleItem(id) {
+    setItems((items) =>
+      items.map((i) => (i.id === id ? { ...i, packed: !i.packed } : i))
+    );
+  }
+
   return (
     <div className="app">
       <Logo />
       <Form onAddItems={handleAddItems} />
-      <PackingList items={items} onDeleteItem={handleDeleteItems} />
-      <Stats />
+      <PackingList
+        items={items}
+        onDeleteItem={handleDeleteItems}
+        onUpdate={handleToggleItem}
+      />
+      <Stats items={items} />
     </div>
   );
 }
@@ -43,7 +53,6 @@ function Form({ onAddItems }) {
       description,
       packed: false,
     };
-    console.log(newItem);
 
     onAddItems(newItem);
 
@@ -72,21 +81,32 @@ function Form({ onAddItems }) {
   );
 }
 
-function PackingList({ items, onDeleteItem }) {
+function PackingList({ items, onDeleteItem, onUpdate }) {
   return (
     <div className="list">
       <ul>
         {items.map((item) => (
-          <Item key={item.id} item={item} onDeleteItem={onDeleteItem} />
+          <Item
+            key={item.id}
+            item={item}
+            onDeleteItem={onDeleteItem}
+            onUpdate={onUpdate}
+          />
         ))}
       </ul>
     </div>
   );
 }
 
-function Item({ item, onDeleteItem }) {
+function Item({ item, onDeleteItem, onUpdate }) {
   return (
     <li>
+      <input
+        type="checkbox"
+        value={item.packed}
+        onChange={() => onUpdate(item.id)}
+      ></input>
+
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
@@ -95,10 +115,24 @@ function Item({ item, onDeleteItem }) {
   );
 }
 
-function Stats() {
+function Stats({ items }) {
+  if (!items.length)
+    return (
+      <p className="stats">
+        <em>Start adding some items to your list 🚀</em>
+      </p>
+    );
+  const numItems = items.length;
+  const numPacked = items.filter((i) => i.packed).length;
+  const percentage = Math.round((numPacked / numItems) * 100);
+
   return (
     <footer className="stats">
-      <p>💼 You have X items on your list, and you already packed X (X%)</p>
+      <em>
+        {percentage !== 100
+          ? `💼 You have ${numItems} items on your list, and you already packed ${numPacked} (${percentage}%)`
+          : "You got everything! Ready to go ✈️"}
+      </em>
     </footer>
   );
 }
